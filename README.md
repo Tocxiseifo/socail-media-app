@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vesper
 
-## Getting Started
+A calm, curated social platform — social media after dark. Portfolio-grade build: Next.js 16 App Router, React 19, TypeScript strict, Tailwind CSS v4, shadcn/ui (Base UI primitives), Inter.
 
-First, run the development server:
+## Status
+
+**Frontend milestone complete.** All screens render against typed in-memory fixtures (`features/*/data.ts` → `fixtures.ts`); the backend (Next.js route handlers + MongoDB) is specified but not yet wired. Auth is simulated — every visitor sees the demo member (`@mira`).
+
+- Product spec: `../PRODUCT_SPEC.md`
+- Architecture: `../ARCHITECTURE.md`
+- Database design: `../DATABASE.md`
+- Engineering rules: `../PROJECT_RULES.md`
+- Design system: `../doc/design.md`
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Other scripts: `npm run build`, `npm run start`, `npm run lint`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+No environment variables are required until the backend lands.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Screens
 
-## Learn More
+| Route | Description |
+|---|---|
+| `/welcome` | Guest landing |
+| `/signup`, `/login` | Auth forms (zod-validated, demo submit) |
+| `/` | Home feed: composer, posts, likes, load-more |
+| `/u/[username]` | Profile with Posts / Followers / Following tabs |
+| `/post/[id]` | Post detail with comment thread |
+| `/settings/profile` | Edit display name and bio |
 
-To learn more about Next.js, take a look at the following resources:
+## Conventions
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Feature-based structure under `features/`; shared composites in `components/`; all visual values come from the Vesper token set in `app/globals.css`. See `../PROJECT_RULES.md` before contributing.

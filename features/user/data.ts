@@ -5,6 +5,7 @@ import type {
   ProfileCardUser,
   UserProfile,
 } from "@/features/user/types/user";
+import type { ProfileInput } from "@/features/user/schemas/profile";
 import { mockFollows, mockUsers } from "@/features/user/fixtures";
 
 function delay(ms: number): Promise<void> {
@@ -93,6 +94,23 @@ export async function getUserFollowing(
     .filter(([follower]) => follower === target)
     .map(([, following]) => following);
   return toCardUsers(followingNames, viewerUsername);
+}
+
+export async function updateProfile(
+  input: ProfileInput
+): Promise<UserProfile | null> {
+  const viewer = await getCurrentUser();
+  if (!viewer) throw new Error("Authentication required");
+
+  await delay(200);
+
+  const user = findUser(viewer.username);
+  if (!user) return null;
+
+  user.displayName = input.displayName;
+  user.bio = input.bio.length > 0 ? input.bio : null;
+
+  return getProfile(user.username, viewer.username);
 }
 
 export async function toggleFollow(username: string): Promise<FollowState> {

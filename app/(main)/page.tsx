@@ -1,28 +1,27 @@
 import type { Metadata } from "next";
-import { GhostIcon } from "lucide-react";
 
+import { getCurrentUser } from "@/features/auth/data";
+import { getHomeFeed } from "@/features/post/data";
+import { HomeFeedScreen } from "@/features/post/components/home-feed-screen";
 import { PageHeader } from "@/components/page-header";
-import { EmptyState } from "@/components/empty-state";
-import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Home",
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [user, initialPage] = await Promise.all([
+    getCurrentUser(),
+    getHomeFeed(),
+  ]);
+
   return (
     <div className="space-y-6">
-      <PageHeader title="Home" />
-      <EmptyState
-        icon={GhostIcon}
-        title="Your feed is quiet for now"
-        description="The feed lands with the next milestone. Follow a few people to fill this space."
-        action={
-          <Button variant="outline" size="sm">
-            Explore
-          </Button>
-        }
+      <PageHeader
+        title="Home"
+        description={user ? "Posts from people you follow." : undefined}
       />
+      <HomeFeedScreen initialPage={initialPage} user={user} />
     </div>
   );
 }

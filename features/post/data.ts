@@ -96,6 +96,20 @@ export function countPostsByAuthor(username: string): number {
   return store.filter((post) => post.author.username === username).length;
 }
 
+export async function adjustCommentCount(
+  id: string,
+  delta: 1 | -1
+): Promise<void> {
+  const post = store.find((item) => item.id === id);
+  if (!post) return;
+
+  store = store.map((item) =>
+    item.id === id
+      ? { ...item, commentCount: Math.max(0, item.commentCount + delta) }
+      : item
+  );
+}
+
 export async function getPostById(id: string): Promise<PostDTO | null> {
   await delay(150);
   return store.find((post) => post.id === id) ?? null;

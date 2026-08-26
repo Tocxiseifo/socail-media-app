@@ -65,6 +65,37 @@ export async function toggleLike(
   return { likedByMe: willLike, likeCount };
 }
 
+export async function getPostsByAuthor(options?: {
+  username: string;
+  cursor?: string;
+}): Promise<FeedPage> {
+  await delay(250);
+
+  const authorPosts = store.filter(
+    (post) => post.author.username === options?.username
+  );
+
+  const start = options?.cursor
+    ? authorPosts.findIndex((post) => post.id === options.cursor) + 1
+    : 0;
+
+  if (start < 0 || start >= authorPosts.length) {
+    return { items: [], nextCursor: null };
+  }
+
+  const items = authorPosts.slice(start, start + PAGE_SIZE);
+  const nextIndex = start + items.length;
+
+  return {
+    items,
+    nextCursor: nextIndex < authorPosts.length ? items[items.length - 1].id : null,
+  };
+}
+
+export function countPostsByAuthor(username: string): number {
+  return store.filter((post) => post.author.username === username).length;
+}
+
 export async function getPostById(id: string): Promise<PostDTO | null> {
   await delay(150);
   return store.find((post) => post.id === id) ?? null;

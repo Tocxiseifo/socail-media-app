@@ -14,3 +14,9 @@ export const connectSocket = (token: string) =>{
 export const getSocket = () =>{
     return socket
 }
+
+export const disconnectSocket = () =>{
+    socket?.disconnect()
+    socket = null
+
+}

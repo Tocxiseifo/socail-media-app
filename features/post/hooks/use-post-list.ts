@@ -57,14 +57,14 @@ export function usePostList({ initialItems }: UsePostListOptions) {
     setPosts((current) => [item, ...current]);
   }
 
-  function append(items: PostDTO[]) {
-    setPosts((current) => [
-      ...current,
-      ...items.filter(
-        (item) => !current.some((existing) => existing.id === item.id)
-      ),
-    ]);
-  }
+  // function append(items: PostDTO[]) {
+  //   setPosts((current) => [
+  //     ...current,
+  //     ...items.filter(
+  //       (item) => !current.some((existing) => existing.id === item.id)
+  //     ),
+  //   ]);
+  // }
 
-  return { posts, likeToggle, edited, deleted, prepend, append };
+  return { posts, likeToggle, edited, deleted, prepend };
 }

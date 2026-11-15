@@ -1,64 +1,73 @@
-"use client";
+﻿"use client";
 
-import Link from "next/link";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import {
-  loginSchema,
-  type LoginInput,
-} from "@/features/auth/schemas/auth";
-import { FormActions, FormField } from "@/features/auth/components/form-field";
-import { Button } from "@/components/ui/button";
+import { loginSchema, type LoginInput } from "@/features/auth/schemas/auth";
+import { FormField } from "@/features/auth/components/form-field";
+import { FormActions } from "@/features/auth/components/form-field";
+import { useAuth } from "@/features/auth/context";
 
 export function LoginForm() {
+  const router = useRouter();
+  const { login } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginInput>({
-    resolver: standardSchemaResolver(loginSchema),
-    defaultValues: { identifier: "", password: "" },
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      identifier: "",
+      password: "",
+    },
   });
 
-  const onSubmit = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    toast.success("Logged in (demo) — sessions arrive with the backend");
+  const onSubmit = async (values: LoginInput) => {
+    setIsSubmitting(true);
+    try {
+      await login(values.identifier, values.password);
+      toast.success("Welcome back");
+      router.push("/");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Login failed";
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
       <FormField
         id="identifier"
-        label="Email or username"
-        autoComplete="username"
+        label="Email"
+        type="email"
+        autoComplete="email"
         placeholder="you@example.com"
-        registration={register("identifier")}
-        error={errors.identifier?.message}
+        error={errors.email?.message}
+        {...register("identifier")}
       />
       <FormField
         id="password"
         label="Password"
         type="password"
         autoComplete="current-password"
-        registration={register("password")}
+        placeholder="••••••••"
         error={errors.password?.message}
+        {...register("password")}
       />
-      <FormActions>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Logging in…" : "Log in"}
-        </Button>
-      </FormActions>
-      <p className="text-center text-sm text-muted-foreground">
-        New to Vesper?{" "}
-        <Link
-          href="/signup"
-          className="font-medium text-primary underline-offset-4 hover:underline"
-        >
-          Create an account
-        </Link>
-      </p>
+      <FormActions
+        submitLabel={isSubmitting ? "Logging in..." : "Log in"}
+        submitDisabled={isSubmitting}
+        linkHref="/signup"
+        linkLabel="Create an account"
+      />
     </form>
   );
 }

@@ -14,6 +14,7 @@ interface FormFieldProps {
   type?: string;
   autoComplete?: string;
   placeholder?: string;
+  email: string;
 }
 
 export function FormField({

@@ -1,86 +1,106 @@
-"use client";
+﻿"use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import {
-  signupSchema,
-  type SignupInput,
-} from "@/features/auth/schemas/auth";
-import { FormActions, FormField } from "@/features/auth/components/form-field";
-import { Button } from "@/components/ui/button";
+import { signupSchema, type SignupInput } from "@/features/auth/schemas/auth";
+import { FormField } from "@/features/auth/components/form-field";
+import { FormActions } from "@/features/auth/components/form-actions";
+import { useAuth } from "@/features/auth/context";
 
 export function SignupForm() {
   const router = useRouter();
+  const { register: registerUser } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<SignupInput>({
-    resolver: standardSchemaResolver(signupSchema),
-    defaultValues: { username: "", displayName: "", email: "", password: "" },
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      email: "",
+      username: "",
+      displayName: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
   const onSubmit = async (values: SignupInput) => {
-    void values;
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    toast.success("Welcome to Vesper (demo)");
-    router.push("/");
+    setIsSubmitting(true);
+    try {
+      await registerUser({
+        email: values.email,
+        username: values.username,
+        displayName: values.displayName,
+        password: values.password,
+      });
+      toast.success("Account created");
+      router.push("/");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Sign up failed";
+      toast.error(message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
-      <FormField
-        id="displayName"
-        label="Display name"
-        autoComplete="name"
-        placeholder="How should we call you?"
-        registration={register("displayName")}
-        error={errors.displayName?.message}
-      />
-      <FormField
-        id="username"
-        label="Username"
-        autoComplete="off"
-        placeholder="lowercase, e.g. mira_k"
-        registration={register("username")}
-        error={errors.username?.message}
-      />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
       <FormField
         id="email"
         label="Email"
         type="email"
         autoComplete="email"
         placeholder="you@example.com"
-        registration={register("email")}
         error={errors.email?.message}
+        {...register("email")}
+      />
+      <FormField
+        id="username"
+        label="Username"
+        autoComplete="username"
+        placeholder="mira"
+        error={errors.username?.message}
+        {...register("username")}
+      />
+      <FormField
+        id="displayName"
+        label="Display name"
+        autoComplete="name"
+        placeholder="Mira"
+        error={errors.displayName?.message}
+        {...register("displayName")}
       />
       <FormField
         id="password"
         label="Password"
         type="password"
         autoComplete="new-password"
-        placeholder="At least 8 characters"
-        registration={register("password")}
+        placeholder="••••••••"
         error={errors.password?.message}
+        {...register("password")}
       />
-      <FormActions>
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Creating account…" : "Create account"}
-        </Button>
-      </FormActions>
-      <p className="text-center text-sm text-muted-foreground">
-        Already have an account?{" "}
-        <Link
-          href="/login"
-          className="font-medium text-primary underline-offset-4 hover:underline"
-        >
-          Log in
-        </Link>
-      </p>
+      <FormField
+        id="confirmPassword"
+        label="Confirm password"
+        type="password"
+        autoComplete="new-password"
+        placeholder="••••••••"
+        error={errors.confirmPassword?.message}
+        {...register("confirmPassword")}
+      />
+      <FormActions
+        submitLabel={isSubmitting ? "Creating account..." : "Sign up"}
+        submitDisabled={isSubmitting}
+        linkHref="/login"
+        linkLabel="Log in"
+      />
     </form>
   );
 }

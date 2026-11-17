@@ -4,6 +4,8 @@ import type {
   PostDTO,
 } from "@/features/post/types/post";
 import { mockPosts } from "@/features/post/fixtures";
+import { getFeed } from "@/lib/api/post";
+import { mapPostToDTO } from "./mappers/mapper";
 
 // Flip to verify loading/empty/error UI without a backend:
 const SCENARIO: "ok" | "empty" | "error" = "ok";
@@ -23,25 +25,11 @@ function delay(ms: number): Promise<void> {
 export async function getHomeFeed(options?: {
   cursor?: string;
 }): Promise<FeedPage> {
-  await delay(250);
-
-  if (SCENARIO === "empty") return { items: [], nextCursor: null };
-  if (SCENARIO === "error") throw new Error("Feed unavailable");
-
-  const start = options?.cursor
-    ? store.findIndex((post) => post.id === options.cursor) + 1
-    : 0;
-
-  if (start < 0 || start >= store.length) {
-    return { items: [], nextCursor: null };
-  }
-
-  const items = store.slice(start, start + PAGE_SIZE);
-  const nextIndex = start + items.length;
-
+  const response = await getFeed()
+  const items =  response.feeds.map(mapPostToDTO)
   return {
-    items,
-    nextCursor: nextIndex < store.length ? items[items.length - 1].id : null,
+    items ,
+    nextCursor: null, //nextIndex < store.length ? items[items.length - 1].id : null
   };
 }
 

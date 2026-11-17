@@ -50,8 +50,8 @@ export function LoginForm() {
         type="email"
         autoComplete="email"
         placeholder="you@example.com"
-        error={errors.email?.message}
-        {...register("identifier")}
+        error={errors.identifier?.message}
+        registration={register("identifier")}
       />
       <FormField
         id="password"
@@ -60,7 +60,7 @@ export function LoginForm() {
         autoComplete="current-password"
         placeholder="••••••••"
         error={errors.password?.message}
-        {...register("password")}
+        registration={register("password")}
       />
       <FormActions
         submitLabel={isSubmitting ? "Logging in..." : "Log in"}

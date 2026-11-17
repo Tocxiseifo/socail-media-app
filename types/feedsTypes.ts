@@ -1,22 +1,7 @@
+import { BackendPost } from "./BackEndPost"
+
 export interface FeedResponse {
     msg: string
-    feeds: Feed[]
+    feeds: BackendPost[]
 }
 
-export interface Feed{
-    id: string 
-    likeCount:number
-    commentCount:number
-    content:string
-    createdAt: string
-    updatedAt: string
-    image?: string[] 
-    author: FeedAuthor
-}
-
-export interface FeedAuthor {
-    id: string
-    username: string
-    displayName: string
-    avatar: string | null
-}

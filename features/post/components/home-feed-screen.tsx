@@ -15,7 +15,7 @@ interface HomeFeedScreenProps {
 }
 
 export function HomeFeedScreen({ initialPage, user }: HomeFeedScreenProps) {
-  const { posts, likeToggle, edited, deleted, prepend, append } = usePostList({
+  const { posts, likeToggle, edited, deleted, prepend } = usePostList({
     initialItems: initialPage.items,
   });
   const [nextCursor, setNextCursor] = useState<string | null>(
@@ -31,7 +31,7 @@ export function HomeFeedScreen({ initialPage, user }: HomeFeedScreenProps) {
     setLoadError(null);
     try {
       const page = await getHomeFeed({ cursor: nextCursor });
-      append(page.items);
+      // append(page.items);
       setNextCursor(page.nextCursor);
     } catch {
       setLoadError("Couldn't load more posts.");

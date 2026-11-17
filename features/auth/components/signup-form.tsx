@@ -59,7 +59,7 @@ export function SignupForm() {
         autoComplete="email"
         placeholder="you@example.com"
         error={errors.email?.message}
-        {...register("email")}
+        registration={register("identifier")}
       />
       <FormField
         id="username"

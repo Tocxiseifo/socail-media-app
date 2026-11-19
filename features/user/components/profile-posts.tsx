@@ -19,7 +19,7 @@ export function ProfilePosts({
   viewerUsername,
   initialPage,
 }: ProfilePostsProps) {
-  const { posts, likeToggle, edited, deleted, append } = usePostList({
+  const { posts, likeToggle, edited, deleted } = usePostList({
     initialItems: initialPage.items,
   });
   const [nextCursor, setNextCursor] = useState<string | null>(
@@ -35,7 +35,7 @@ export function ProfilePosts({
     setLoadError(null);
     try {
       const page = await getPostsByAuthor({ username, cursor: nextCursor });
-      append(page.items);
+      // append(page.items);
       setNextCursor(page.nextCursor);
     } catch {
       setLoadError("Couldn't load more posts.");

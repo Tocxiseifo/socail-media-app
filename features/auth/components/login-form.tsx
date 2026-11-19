@@ -21,9 +21,8 @@ export function LoginForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
     defaultValues: {
-      identifier: "",
+      email: "",
       password: "",
     },
   });
@@ -31,7 +30,7 @@ export function LoginForm() {
   const onSubmit = async (values: LoginInput) => {
     setIsSubmitting(true);
     try {
-      await login(values.identifier, values.password);
+      await login(values.email, values.password);
       toast.success("Welcome back");
       router.push("/");
     } catch (error) {
@@ -45,13 +44,13 @@ export function LoginForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
       <FormField
-        id="identifier"
+        id="email"
         label="Email"
         type="email"
         autoComplete="email"
         placeholder="you@example.com"
-        error={errors.identifier?.message}
-        registration={register("identifier")}
+        error={errors.email?.message}
+        registration={register("email")}
       />
       <FormField
         id="password"
@@ -62,12 +61,18 @@ export function LoginForm() {
         error={errors.password?.message}
         registration={register("password")}
       />
-      <FormActions
-        submitLabel={isSubmitting ? "Logging in..." : "Log in"}
-        submitDisabled={isSubmitting}
-        linkHref="/signup"
-        linkLabel="Create an account"
-      />
+      <FormActions>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Logging in..." : "Log in"}
+        </button>
+
+        <a href="/signup">
+          Create an account
+        </a>
+      </FormActions>
     </form>
   );
 }

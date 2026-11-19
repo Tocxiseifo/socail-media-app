@@ -27,6 +27,8 @@ export async function getHomeFeed(options?: {
 }): Promise<FeedPage> {
   const response = await getFeed()
   const items =  response.feeds.map(mapPostToDTO)
+  console.log("MAPPED ITEMS", items);
+
   return {
     items ,
     nextCursor: null, //nextIndex < store.length ? items[items.length - 1].id : null

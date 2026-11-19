@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { FeedPage } from "@/features/post/types/post";
 import { usePostList } from "@/features/post/hooks/use-post-list";
@@ -15,15 +15,15 @@ interface HomeFeedScreenProps {
 }
 
 export function HomeFeedScreen({ initialPage, user }: HomeFeedScreenProps) {
-  const { posts, likeToggle, edited, deleted, prepend } = usePostList({
-    initialItems: initialPage.items,
+  const { posts, likeToggle, edited, deleted, prepend ,replace} = usePostList({
+    initialItems: [],
   });
   const [nextCursor, setNextCursor] = useState<string | null>(
     initialPage.nextCursor
   );
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-
+  // const [page , setPage] = useState<FeedPage>(initialPage)
   const loadMore = async () => {
     if (!nextCursor || loadingMore) return;
 
@@ -39,7 +39,15 @@ export function HomeFeedScreen({ initialPage, user }: HomeFeedScreenProps) {
       setLoadingMore(false);
     }
   };
-
+  useEffect(() =>{
+    getHomeFeed().then((data) =>{
+      // setPage(data.items)
+      replace(data.items)
+      setNextCursor(data.nextCursor)
+    }).catch(() => {
+      setLoadError("Couldn't load posts.");
+    })
+  },[replace])
   return (
     <div className="flex flex-col gap-6">
       {user ? (

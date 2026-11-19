@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
 import type { PostDTO } from "@/features/post/types/post";
@@ -12,7 +12,6 @@ interface UsePostListOptions {
 
 export function usePostList({ initialItems }: UsePostListOptions) {
   const [posts, setPosts] = useState<PostDTO[]>(initialItems);
-
   function applyUpdate(updated: PostDTO) {
     setPosts((current) =>
       current.map((item) => (item.id === updated.id ? updated : item))
@@ -56,7 +55,12 @@ export function usePostList({ initialItems }: UsePostListOptions) {
   function prepend(item: PostDTO) {
     setPosts((current) => [item, ...current]);
   }
-
+  
+  // useCallback keeps the function reference stable so useEffect doesn't re-run unnecessarily
+  const replace = useCallback((items: PostDTO[])=>{
+    setPosts(items);
+  },[])
+  
   // function append(items: PostDTO[]) {
   //   setPosts((current) => [
   //     ...current,
@@ -66,5 +70,5 @@ export function usePostList({ initialItems }: UsePostListOptions) {
   //   ]);
   // }
 
-  return { posts, likeToggle, edited, deleted, prepend };
+  return { posts, likeToggle, edited, deleted, prepend , replace};
 }

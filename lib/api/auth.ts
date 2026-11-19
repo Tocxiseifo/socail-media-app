@@ -21,6 +21,7 @@ export async function loginApi(payload: { email: string; password: string }) {
 }
 
 export async function logoutApi() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return apiFetch<{ msg?: string; logout?: any }>('/api/auth/logOut', {
     method: 'POST',
   })

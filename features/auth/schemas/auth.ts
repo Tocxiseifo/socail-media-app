@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { email, z } from "zod";
 
 export const RESERVED_USERNAMES: ReadonlySet<string> = new Set([
   "admin",
@@ -67,7 +67,7 @@ export const signupSchema = z.object({
 });
 
 export const loginSchema = z.object({
-  identifier: z
+  email: z
     .string()
     .trim()
     .min(3, "Enter your email or username")

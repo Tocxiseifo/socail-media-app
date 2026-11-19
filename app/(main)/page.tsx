@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 
 import { getCurrentUser } from "@/features/auth/data";
@@ -10,10 +11,11 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [user, initialPage] = await Promise.all([
-    getCurrentUser(),
-    getHomeFeed(),
-  ]);
+  // const [user, initialPage] = await Promise.all([
+  //   getCurrentUser(),
+  //   getHomeFeed(),
+  // ]);
+  const user = await getCurrentUser();
 
   return (
     <div className="space-y-6">
@@ -21,7 +23,12 @@ export default async function HomePage() {
         title="Home"
         description={user ? "Posts from people you follow." : undefined}
       />
-      <HomeFeedScreen initialPage={initialPage} user={user} />
+      <HomeFeedScreen  initialPage={{
+        items: [],
+        nextCursor: null,
+        }}
+        user={user}
+       />
     </div>
   );
 }

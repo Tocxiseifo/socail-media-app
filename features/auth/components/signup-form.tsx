@@ -8,7 +8,7 @@ import { toast } from "sonner";
 
 import { signupSchema, type SignupInput } from "@/features/auth/schemas/auth";
 import { FormField } from "@/features/auth/components/form-field";
-import { FormActions } from "@/features/auth/components/form-actions";
+import { FormActions } from "@/features/auth/components/form-field";
 import { useAuth } from "@/features/auth/context";
 
 export function SignupForm() {
@@ -21,13 +21,11 @@ export function SignupForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<SignupInput>({
-    resolver: zodResolver(signupSchema),
     defaultValues: {
       email: "",
       username: "",
       displayName: "",
       password: "",
-      confirmPassword: "",
     },
   });
 
@@ -59,7 +57,7 @@ export function SignupForm() {
         autoComplete="email"
         placeholder="you@example.com"
         error={errors.email?.message}
-        registration={register("identifier")}
+        registration={register("email")}
       />
       <FormField
         id="username"
@@ -67,7 +65,7 @@ export function SignupForm() {
         autoComplete="username"
         placeholder="mira"
         error={errors.username?.message}
-        {...register("username")}
+        registration={register("username")}
       />
       <FormField
         id="displayName"
@@ -75,7 +73,7 @@ export function SignupForm() {
         autoComplete="name"
         placeholder="Mira"
         error={errors.displayName?.message}
-        {...register("displayName")}
+        registration={register("displayName")}
       />
       <FormField
         id="password"
@@ -84,9 +82,9 @@ export function SignupForm() {
         autoComplete="new-password"
         placeholder="••••••••"
         error={errors.password?.message}
-        {...register("password")}
+        registration={register("password")}
       />
-      <FormField
+      {/* <FormField
         id="confirmPassword"
         label="Confirm password"
         type="password"
@@ -94,13 +92,19 @@ export function SignupForm() {
         placeholder="••••••••"
         error={errors.confirmPassword?.message}
         {...register("confirmPassword")}
-      />
+      /> */}
       <FormActions
-        submitLabel={isSubmitting ? "Creating account..." : "Sign up"}
-        submitDisabled={isSubmitting}
-        linkHref="/login"
-        linkLabel="Log in"
-      />
+      >
+        <button
+        type="submit"
+        disabled={isSubmitting}
+      >
+      {isSubmitting ? "Creating account..." : "Sign up"}
+      </button>
+      <a href="/signup">
+        Log in
+      </a>
+      </FormActions>
     </form>
   );
 }

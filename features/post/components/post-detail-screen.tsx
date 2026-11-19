@@ -39,7 +39,7 @@ export function PostDetailScreen({
     };
     setPost(optimistic);
 
-    void toggleLike(target.id)
+    void toggleLike(target.id ,target.likedByMe)
       .then((result) => {
         if (!result) throw new Error();
         setPost({

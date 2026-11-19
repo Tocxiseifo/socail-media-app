@@ -6,6 +6,7 @@ import type {
 import { mockPosts } from "@/features/post/fixtures";
 import { getFeed } from "@/lib/api/post";
 import { mapPostToDTO } from "./mappers/mapper";
+import { apiFetch } from "@/lib/api";
 
 // Flip to verify loading/empty/error UI without a backend:
 const SCENARIO: "ok" | "empty" | "error" = "ok";
@@ -27,8 +28,6 @@ export async function getHomeFeed(options?: {
 }): Promise<FeedPage> {
   const response = await getFeed()
   const items =  response.feeds.map(mapPostToDTO)
-  console.log("MAPPED ITEMS", items);
-
   return {
     items ,
     nextCursor: null, //nextIndex < store.length ? items[items.length - 1].id : null
@@ -36,25 +35,22 @@ export async function getHomeFeed(options?: {
 }
 
 export async function toggleLike(
-  id: string
+  id: string,
+  likedByMe: boolean
 ): Promise<{ likedByMe: boolean; likeCount: number } | null> {
-  await delay(150);
+  const response = await apiFetch<{
+    likeCount:number
+    likedByMe:boolean
+    
+  }>(
+    `/api/posts/like/${id}` , 
+    {
+      method:likedByMe ? "DELETE" : "POST"
+    }
+  )
 
-  const post = store.find((item) => item.id === id);
-  if (!post) return null;
-
-  const willLike = !likedByViewer.has(id);
-  if (willLike) likedByViewer.add(id);
-  else likedByViewer.delete(id);
-
-  const likeCount = Math.max(0, post.likeCount + (willLike ? 1 : -1));
-  store = store.map((item) =>
-    item.id === id ? { ...item, likeCount, likedByMe: willLike } : item
-  );
-
-  return { likedByMe: willLike, likeCount };
+  return response
 }
-
 export async function getPostsByAuthor(options?: {
   username: string;
   cursor?: string;

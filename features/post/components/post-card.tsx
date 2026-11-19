@@ -52,7 +52,7 @@ export function PostCard({
 
   const isOwner = post.author.username === viewerUsername;
   const isGuest = viewerUsername === null;
-
+  console.log(post.likedByMe)
   return (
     <article className="group rounded-xl border bg-card p-4 transition-shadow hover:shadow-glow sm:p-6">
       <div className="flex items-start gap-3">
@@ -150,12 +150,12 @@ export function PostCard({
             aria-label={post.likedByMe ? "Unlike" : "Like"}
             className={cn(
               "gap-1.5 text-muted-foreground",
-              post.likedByMe && "text-primary"
+              post.likedByMe && "!text-primary"
             )}
             onClick={() => onLikeToggle(post)}
           >
             <HeartIcon
-              className={cn("size-4", post.likedByMe && "fill-primary")}
+              className={cn("size-4", post.likedByMe && "fill-primary !text-primary")}
               strokeWidth={1.5}
               aria-hidden="true"
             />

@@ -14,4 +14,5 @@ export interface BackendPost {
     likeCount: number;
     createdAt: string;
     updatedAt: string;
+    likedByMe:boolean
 }

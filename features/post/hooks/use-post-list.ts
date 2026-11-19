@@ -26,7 +26,7 @@ export function usePostList({ initialItems }: UsePostListOptions) {
     };
     applyUpdate(optimistic);
 
-    void toggleLike(target.id)
+    void toggleLike(target.id , target.likedByMe)
       .then((result) => {
         if (!result) throw new Error();
         applyUpdate({
@@ -34,6 +34,7 @@ export function usePostList({ initialItems }: UsePostListOptions) {
           likedByMe: result.likedByMe,
           likeCount: result.likeCount,
         });
+        toast.success("your like wes saved");
       })
       .catch(() => {
         applyUpdate(target);

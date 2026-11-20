@@ -16,6 +16,6 @@ export  function mapPostToDTO(post:BackendPost) :PostDTO {
         commentCount:post.commentCount,
         editedAt:post.updatedAt,
         createdAt:post.createdAt,
-        likedByMe: Boolean(post.likedByMe) ?? true
+        likedByMe: post.likedByMe
     }
 }   
